@@ -17,7 +17,7 @@ class LoginScreen extends StatelessWidget {
             onPressed: () async {
               try {
                 final authenticationService = AuthenticationService();
-                final user = await authenticationService.signInWithGoogle();
+                await authenticationService.signInWithGoogle();
 
                 if (context.mounted) {
                   Navigator.of(context).pushReplacement(

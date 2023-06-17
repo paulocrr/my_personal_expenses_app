@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:my_personal_expenses_app/pages/expenses_page.dart';
-import 'package:my_personal_expenses_app/pages/login_page.dart';
-import 'package:my_personal_expenses_app/services/authentication_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,7 +9,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _listPages = [
+  final _listPages = const [
     ExpensesPage(),
     Text('Programar'),
     Text('Profile'),

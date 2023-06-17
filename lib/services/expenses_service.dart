@@ -8,6 +8,27 @@ class ExpensesService {
   final cloudFirestore = FirebaseFirestore.instance;
   final firebaseAuth = FirebaseAuth.instance;
 
+  Future<List<Spent>> getMyExpenses() async {
+    try {
+      final userId = firebaseAuth.currentUser?.uid;
+
+      if (userId != null) {
+        final result = await cloudFirestore
+            .collection('expenses')
+            .where('userId', isEqualTo: userId)
+            .get();
+
+        final documents = result.docs;
+
+        return documents.map((doc) => Spent.fromJson(doc.data())).toList();
+      } else {
+        throw GetMyExpensesException();
+      }
+    } catch (e) {
+      throw GetMyExpensesException();
+    }
+  }
+
   Future<void> saveSpent({
     required String description,
     required double amount,
@@ -22,6 +43,7 @@ class ExpensesService {
           description: description,
           amount: amount,
           userId: userId,
+          createdAt: DateTime.now(),
         );
         await cloudFirestore
             .collection('expenses')
