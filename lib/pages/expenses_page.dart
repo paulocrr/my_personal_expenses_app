@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:intl/intl.dart';
+import 'package:my_personal_expenses_app/models/spent.dart';
 import 'package:my_personal_expenses_app/services/expenses_service.dart';
 
 class ExpensesPage extends StatefulWidget {
@@ -22,47 +23,42 @@ class _ExpensesPageState extends State<ExpensesPage> {
       appBar: AppBar(
         title: const Text('Mis gastos'),
       ),
-      body: FutureBuilder(
-          future: expensesService.getMyExpenses(),
+      body: StreamBuilder(
+          stream: expensesService.getMyExpenses(),
           builder: (_, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              final data = snapshot.data;
-              if (data != null) {
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    await expensesService.getMyExpenses();
-                    setState(() {});
-                  },
-                  child: ListView(
-                    children: [
-                      ...data.map(
-                        (spent) {
-                          final dateFormat = DateFormat('d, MMM y - H:m')
-                              .format(spent.createdAt);
-                          return ListTile(
-                            title: Text(spent.description),
-                            subtitle: Text(dateFormat),
-                            leading: Text(
-                              'S/ ${spent.amount.toStringAsFixed(2)}',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            minLeadingWidth: 56,
-                          );
-                        },
-                      ).toList()
-                    ],
-                  ),
-                );
-              } else {
-                return const Center(
-                  child: Text('No hay data disponible'),
-                );
-              }
+            }
+
+            final data = snapshot.data;
+            if (data != null) {
+              return ListView(
+                children: [
+                  ...data.docs.map(
+                    (doc) {
+                      final spentData = doc.data();
+                      if (spentData != null) {
+                        final spent =
+                            Spent.fromJson(spentData as Map<String, dynamic>);
+                        final dateFormat = DateFormat('d, MMM y - H:m')
+                            .format(spent.createdAt);
+                        return ListTile(
+                          title: Text(spent.description),
+                          subtitle: Text(dateFormat),
+                          leading: Text(
+                            'S/ ${spent.amount.toStringAsFixed(2)}',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          minLeadingWidth: 56,
+                        );
+                      }
+                      return Text('Este dato fallo');
+                    },
+                  ).toList()
+                ],
+              );
             } else {
               return const Center(
                 child: Text('Algo salio mal'),
@@ -118,7 +114,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                                   _descriptionController.clear();
                                   _amountController.clear();
 
-                                  setState(() {});
+                                  // setState(() {});
                                 }
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(

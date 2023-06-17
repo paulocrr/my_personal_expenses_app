@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_personal_expenses_app/pages/expenses_page.dart';
+import 'package:my_personal_expenses_app/services/firebase_notification_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,6 +17,22 @@ class _HomePageState extends State<HomePage> {
   ];
 
   var _pageIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    final notificationsService = FirebaseNotificationService(
+      onListen: (message) async {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Llego Notification: ${message.notification?.title}'),
+          ),
+        );
+      },
+    );
+
+    notificationsService.initNotifications();
+  }
 
   @override
   Widget build(BuildContext context) {

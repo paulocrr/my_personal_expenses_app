@@ -8,19 +8,17 @@ class ExpensesService {
   final cloudFirestore = FirebaseFirestore.instance;
   final firebaseAuth = FirebaseAuth.instance;
 
-  Future<List<Spent>> getMyExpenses() async {
+  Stream<QuerySnapshot> getMyExpenses() {
     try {
       final userId = firebaseAuth.currentUser?.uid;
 
       if (userId != null) {
-        final result = await cloudFirestore
+        final result = cloudFirestore
             .collection('expenses')
             .where('userId', isEqualTo: userId)
-            .get();
+            .snapshots();
 
-        final documents = result.docs;
-
-        return documents.map((doc) => Spent.fromJson(doc.data())).toList();
+        return result;
       } else {
         throw GetMyExpensesException();
       }
