@@ -8,4 +8,11 @@ class LocalUser {
     this.name,
     this.photoUrl,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'photoUrl': photoUrl,
+    };
+  }
 }
