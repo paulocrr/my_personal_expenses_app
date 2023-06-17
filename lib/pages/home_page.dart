@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_personal_expenses_app/pages/expenses_page.dart';
 import 'package:my_personal_expenses_app/pages/login_page.dart';
 import 'package:my_personal_expenses_app/services/authentication_service.dart';
 
@@ -10,41 +11,40 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _listPages = [
+    ExpensesPage(),
+    Text('Programar'),
+    Text('Profile'),
+  ];
+
+  var _pageIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () async {
-            final authenticationService = AuthenticationService();
-            await authenticationService.googleLogOut();
-            if (context.mounted) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return const LoginScreen();
-                  },
-                ),
-              );
-            }
-          },
-          child: const Text('Log out'),
-        ),
+      body: _listPages[_pageIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.monetization_on),
+            label: 'Gastos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.timer),
+            label: 'Programar Gasto',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
+        ],
+        currentIndex: _pageIndex,
+        onTap: (index) {
+          setState(() {
+            _pageIndex = index;
+          });
+        },
       ),
-      bottomNavigationBar: BottomNavigationBar(items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.monetization_on),
-          label: 'Gastos',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.timer),
-          label: 'Programar Gasto',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Perfil',
-        ),
-      ]),
     );
   }
 }
