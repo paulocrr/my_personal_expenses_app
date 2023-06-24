@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_personal_expenses_app/pages/expenses_page.dart';
 import 'package:my_personal_expenses_app/services/firebase_notification_service.dart';
+import 'package:my_personal_expenses_app/services/local_notifications_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,15 +24,12 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     final notificationsService = FirebaseNotificationService(
       onListen: (message) async {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Llego Notification: ${message.notification?.title}'),
-          ),
-        );
+        LocalNotificationService.display(message);
       },
     );
 
     notificationsService.initNotifications();
+    LocalNotificationService.scheduleNotification(const Duration(seconds: 5));
   }
 
   @override

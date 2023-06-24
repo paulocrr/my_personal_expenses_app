@@ -54,7 +54,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                           minLeadingWidth: 56,
                         );
                       }
-                      return Text('Este dato fallo');
+                      return const Text('Este dato fallo');
                     },
                   ).toList()
                 ],
